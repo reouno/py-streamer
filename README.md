@@ -25,8 +25,12 @@ python receiver_client.py
 python receiver_client.py --only-cui
 ```
 
-## TODO
+# TODO
 - [ ] set HOST and PORT in command line args
 - [ ] appropriate termination
 - [ ] selective connection between streamer and receiver
 - [ ] seperate streaming channels when a receiver receives videos from multiple streamers
+
+## LICENCE
+
+This software is released under the MIT License, see [LICENSE.txt](https://github.com/reouno/py-streamer/blob/master/LICENSE.txt).
