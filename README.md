@@ -7,6 +7,16 @@ python video streaming server
 - python3
 - opencv3
 
+# HOST and PORT setting
+
+- set listening host and port in [server.py](https://github.com/reouno/py-streamer/blob/master/server.py)
+- set server host and port in [streamer_client.py](https://github.com/reouno/py-streamer/blob/master/streamer_client.py), [streamer_client_raspi.py](https://github.com/reouno/py-streamer/blob/master/streamer_client_raspi.py), [receiver_client.py](https://github.com/reouno/py-streamer/blob/master/receiver_client.py)
+
+# camera setting
+
+- set resolution, fps, and device number in [streamer_client.py](https://github.com/reouno/py-streamer/blob/master/streamer_client.py) if you use webcam + opencv.
+- set resolution in [streamer_client_raspi.py](https://github.com/reouno/py-streamer/blob/master/streamer_client_raspi.py) if you use raspberrypi + picamera module.
+
 # How to run
 
 ```
