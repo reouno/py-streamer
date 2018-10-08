@@ -3,6 +3,7 @@ python video streaming server
 
 # env
 
+- test env: ubuntu18.04
 - python3
 - opencv3
 
