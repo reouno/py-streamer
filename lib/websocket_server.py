@@ -57,21 +57,22 @@ class WebSocketServer(object):
             print('exit process by KeyboardInterrupt')
             return
 
-    def get_status(self):
+    def get_status(self, interval=1):
+        '''you should use monitor_clients rather than this method.'''
         try:
             while 1:
                 len_streamers, len_streamers = self.client_manager.get_status()
                 print('num streamers: {}, num receivers: {}'.format(len_streamers, len_receivers))
-                time.sleep(5)
+                time.sleep(interval)
         except KeyboardInterrupt:
             pass
 
-    def monitor_clients(self):
+    def monitor_clients(self, interval=1):
         '''monitor all clients and delete if connection closed'''
         while 1:
             len_streamers, len_receivers = self.client_manager.monitor_clients()
-            print('num streamers: {}, num receivers: {}'.format(len_streamers, len_receivers))
-            time.sleep(1)
+            print('[{}]: num streamers: {}, num receivers: {}'.format(datetime.datetime.now(), len_streamers, len_receivers))
+            time.sleep(interval)
 
     def __deliver__(self, streamer, streamer_addr, streamer_id) -> bool:
         try:
