@@ -24,6 +24,11 @@ def main():
     ps.append(Process(target=server.start_accept))
     ps.append(Process(target=server.monitor_clients))
     [p.start() for p in ps]
+    try:
+        while 1:
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        print('stop all process...')
     [p.join() for p in ps]
 
 

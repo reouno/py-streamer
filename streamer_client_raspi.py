@@ -45,18 +45,37 @@ if __name__ == '__main__':
     SERVER_HOST = '192.168.0.2'
     SERVER_PORT = 12345
 
-    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    soc.connect((SERVER_HOST, SERVER_PORT))
-    soc.send(b'streamer_' + a.name.encode('utf-8'))
 
     camera = Camera()
     try:
         while 1:
-            img = camera.get_frame()
-            soc.sendall(img)
-            soc.send(b'<--!END!-->')
-            print(datetime.datetime.now(), len(img))
+            soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            try:
+                soc.connect((SERVER_HOST, SERVER_PORT))
+                soc.send(b'streamer_' + a.name.encode('utf-8'))
+                if soc.recv(100).find(b'channel_already_used') == 0:
+                    print('channel "{}" is already used.'.format(a.name))
+                    exit()
+                while 1:
+                    img = camera.get_frame()
+                    soc.sendall(img)
+                    soc.send(b'<--!END!-->')
+                    print(datetime.datetime.now(), len(img))
+            except ConnectionResetError as e:
+                print(datetime.datetime.now(), e)
+                soc.close()
+                time.sleep(2)
+                continue
+            except ConnectionRefusedError as e:
+                print(datetime.datetime.now(), e)
+                soc.close()
+                time.sleep(10)
+                continue
     except KeyboardInterrupt:
-        print('close streaming')
+        pass
+    finally:
+        print('close socket')
+        soc.close()
+
 

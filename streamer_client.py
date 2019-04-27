@@ -32,23 +32,35 @@ if __name__ == '__main__':
 
     cam = videoCapture(resolution=RESOLUTION, fps=FPS, device = DEVICE)
 
-    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    soc.connect((SERVER_HOST, SERVER_PORT))
-    soc.send(b'streamer_' + a.name.encode('utf-8'))
     try:
         while 1:
+            soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
+                soc.connect((SERVER_HOST, SERVER_PORT))
+                soc.send(b'streamer_' + a.name.encode('utf-8'))
+                if soc.recv(100).find(b'channel_already_used') == 0:
+                    print('channel "{}" is already used.'.format(a.name))
+                    exit()
                 while True:
                     ret_val, img = cam.read()
                     img_bytes = encode_to_string(img)
                     print(len(img_bytes))
                     soc.sendall(img_bytes)
                     soc.send(b'<--!END!-->')
-            except Exception as e:
-                print(e)
+            except ConnectionResetError as e:
+                print(datetime.datetime.now(), e)
+                soc.close()
+                time.sleep(2)
+                continue
+            except ConnectionRefusedError as e:
+                print(datetime.datetime.now(), e)
+                soc.close()
+                time.sleep(10)
+                continue
     except KeyboardInterrupt:
         pass
     finally:
         print('close socket')
         soc.close()
+        cam.release()
