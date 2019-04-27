@@ -47,7 +47,7 @@ if __name__ == '__main__':
                     print(len(img_bytes))
                     soc.sendall(img_bytes)
                     soc.send(b'<--!END!-->')
-            except ConnectionResetError as e:
+            except (BrokenPipeError, ConnectionResetError) as e:
                 print(datetime.datetime.now(), e)
                 soc.close()
                 time.sleep(2)
