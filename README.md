@@ -38,7 +38,7 @@ python receiver_client.py --name my_channel --only-cui
 
 # TODO
 - [ ] set HOST and PORT in command line args
-- [ ] appropriate termination
+- [x] appropriate termination
 - [x] selective connection between streamer and receiver
 - [x] seperate streaming channels when a receiver receives videos from multiple streamers
 
