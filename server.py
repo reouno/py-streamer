@@ -9,13 +9,14 @@ def main():
     manager = Manager()
     streamers = manager.dict()
     receivers = manager.dict()
+    channels = manager.dict()
 
     # websocket server
     # server params
     WHOST = ''
     WPORT = 12345
 
-    client_manager = lib.client_mng.ClientManager(streamers, receivers)
+    client_manager = lib.client_mng.ClientManager(streamers, receivers, channels)
     server = lib.websocket_server.WebSocketServer(WHOST, WPORT, client_manager)
 
     # processes

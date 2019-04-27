@@ -14,7 +14,7 @@
 import datetime
 
 class ClientManager(object):
-    def __init__(self, shared_streamers, shared_receivers):
+    def __init__(self, shared_streamers, shared_receivers, shared_channels):
         self.shared_streamers = shared_streamers
         self.shared_receivers = shared_receivers
 
@@ -24,20 +24,23 @@ class ClientManager(object):
     def receivers(self):
         return self.shared_receivers.items()
 
-    def add_streamer(self, streamer, addr, streamer_id) -> bool:
-        if streamer_id in self.shared_streamers:
-            print('streamer already exists, addr:{}, id{}'.format(addr, streamer_id))
+    def channels(self):
+        return [c for _, _, c in self.shared_streamers.values()]
+
+    def add_streamer(self, streamer, addr, streamer_id, channel) -> bool:
+        if (streamer_id in self.shared_streamers) or (channel in self.channels()):
+            print('streamer already exists, addr:{}, id:{}, channel:{}'.format(addr, streamer_id, channel))
             return False
         else:
-            self.shared_streamers[streamer_id] = (streamer, addr)
+            self.shared_streamers[streamer_id] = (streamer, addr, channel)
             return True
 
-    def add_receiver(self, receiver, addr, receiver_id) -> bool:
+    def add_receiver(self, receiver, addr, receiver_id, channel) -> bool:
         if receiver_id in self.shared_receivers:
-            print('receiver already exists, addr:{}, id{}'.format(addr, receiver_id))
+            print('receiver already exists, addr:{}, id:{}, channel:{}'.format(addr, receiver_id, channel))
             return False
         else:
-            self.shared_receivers[receiver_id] = (receiver, addr)
+            self.shared_receivers[receiver_id] = (receiver, addr, channel)
             return True
 
     def delete_streamer(self, streamer_id) -> bool:
@@ -75,22 +78,22 @@ class ClientManager(object):
 
     def __monitor_streamers__(self) -> int:
         '''monitor streamers and delete if connection closed'''
-        for streamer_id, (conn, addr) in self.shared_streamers.items():
+        for streamer_id, (conn, addr, channel) in self.shared_streamers.items():
             try:
                 conn.send(str(datetime.datetime.now()).encode('utf-8') + b'Hey, you alive?')
             except (BrokenPipeError, ConnectionResetError):
                 conn.close()
-                print('closed streamer connection {}, id:{}'.format(addr, streamer_id))
+                print('closed streamer connection {}, id:{}, channel:{}'.format(addr, streamer_id, channel))
                 self.delete_streamer(streamer_id)
         return self.len_streamers()
 
     def __monitor_receivers__(self) -> int:
         '''monitor receivers and delete if connection closed'''
-        for receiver_id, (conn, addr) in self.shared_receivers.items():
+        for receiver_id, (conn, addr, channel) in self.shared_receivers.items():
             try:
                 conn.send(str(datetime.datetime.now()).encode('utf-8') + b'Hey, you alive?')
             except (BrokenPipeError, ConnectionResetError):
                 conn.close()
-                print('closed receiver connection {}, id:{}'.format(addr, receiver_id))
+                print('closed receiver connection {}, id:{}, channel:{}'.format(addr, receiver_id, channel))
                 self.delete_receiver(receiver_id)
         return self.len_receivers()

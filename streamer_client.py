@@ -1,4 +1,5 @@
 import cv2
+import datetime
 import redis
 import socket
 import time
@@ -15,6 +16,11 @@ def encode_to_string(img, img_format='.jpg'):
     return cv2.imencode(img_format, img)[1].tobytes()
 
 if __name__ == '__main__':
+    import argparse
+    psr = argparse.ArgumentParser()
+    psr.add_argument('--name', help='streaming name (id)', default='anonymous')
+    a = psr.parse_args()
+
     # websocket server
     SERVER_HOST = 'localhost'
     SERVER_PORT = 12345
@@ -29,7 +35,7 @@ if __name__ == '__main__':
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     soc.connect((SERVER_HOST, SERVER_PORT))
-    soc.send(b'streamer')
+    soc.send(b'streamer_' + a.name.encode('utf-8'))
     try:
         while 1:
             try:

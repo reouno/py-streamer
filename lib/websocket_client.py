@@ -8,12 +8,12 @@ class WebSocketClient():
     - receiving buffer size is recommended to relatively small exponent of 2 such as 4096.
     - should the connection close at the end'''
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, stream_name):
         self.SERVER_HOST = host
         self.SERVER_PORT = port
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__connect__()
-        self.send(b'receiver')
+        self.send(b'receiver_' + stream_name.encode('utf-8'))
 
     def __connect__(self):
         self.s.connect((self.SERVER_HOST, self.SERVER_PORT))
