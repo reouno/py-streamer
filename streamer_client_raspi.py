@@ -9,11 +9,13 @@ import time
 class Camera(object):
     def __init__(self):
         self.RESOLUTION = (640, 480)
+        self.FRAMERATE = 15
         self.cam = self.frames()
 
     def frames(self):
         with picamera.PiCamera() as camera:
             camera.resolution = self.RESOLUTION
+            camera.framerate = self.FRAMERATE
             time.sleep(2) # let camera warm up
 
             stream = io.BytesIO()
