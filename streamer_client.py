@@ -1,6 +1,5 @@
 import cv2
 import datetime
-import redis
 import socket
 import time
 
@@ -27,7 +26,7 @@ if __name__ == '__main__':
 
     # camera params
     RESOLUTION = 640, 480
-    FPS = 24
+    FPS = 15
     DEVICE = 0
 
     cam = videoCapture(resolution=RESOLUTION, fps=FPS, device = DEVICE)
