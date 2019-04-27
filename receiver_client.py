@@ -9,6 +9,7 @@ from datetime import datetime
 if __name__ == '__main__':
     import argparse
     psr = argparse.ArgumentParser()
+    psr.add_argument('--name', help='streaming name (id)', default='anonymous')
     psr.add_argument('--only-cui', help='check if receiver running in cui for debug use', action='store_true')
     psr.add_argument('-s', '--save-video-file', help='path to save video. not save video in default. this param will be ignored if --only-cui is used.', default='')
     a = psr.parse_args()
@@ -16,7 +17,7 @@ if __name__ == '__main__':
     SERVER_HOST = 'localhost'
     SERVER_PORT = 12345
 
-    soc = lib.websocket_client.WebSocketClient(SERVER_HOST, SERVER_PORT)
+    soc = lib.websocket_client.WebSocketClient(SERVER_HOST, SERVER_PORT, a.name)
     print('connection success!')
     cam = lib.stream_receiver.VideoStream(soc)
 

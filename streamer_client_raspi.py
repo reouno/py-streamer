@@ -36,6 +36,11 @@ class Camera(object):
         return next(self.cam)
 
 if __name__ == '__main__':
+    import argparse
+    psr = argparse.ArgumentParser()
+    psr.add_argument('--name', help='streaming name (id)', default='anonymous')
+    a = psr.parse_args()
+
     # server params
     SERVER_HOST = '192.168.0.2'
     SERVER_PORT = 12345
@@ -43,7 +48,7 @@ if __name__ == '__main__':
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     soc.connect((SERVER_HOST, SERVER_PORT))
-    soc.send(b'streamer')
+    soc.send(b'streamer_' + a.name.encode('utf-8'))
 
     camera = Camera()
     try:
