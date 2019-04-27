@@ -40,7 +40,7 @@ python receiver_client.py --only-cui
 - [ ] set HOST and PORT in command line args
 - [ ] appropriate termination
 - [ ] selective connection between streamer and receiver
-- [ ] seperate streaming channels when a receiver receives videos from multiple streamers
+- [x] seperate streaming channels when a receiver receives videos from multiple streamers
 
 ## LICENCE
 
