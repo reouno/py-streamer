@@ -20,8 +20,8 @@ class WebSocketServer(object):
         '''register new clients and start deliver if streamer'''
         ps = []
         while 1:
-            time.sleep(0.01)
             try:
+                time.sleep(0.01)
                 print('listen at {}:{}'.format(self.HOST, self.PORT))
                 client_socket, addr = self.s.accept()
                 client_id = str(uuid.uuid4())
@@ -30,7 +30,10 @@ class WebSocketServer(object):
                 # discriminator must be like b"streamer_somename"
                 if discriminator.find(b'streamer_') == 0:
                     print('found streamer. channel is "{}"'.format(channel))
-                    self.client_manager.add_streamer(client_socket, addr, client_id, channel)
+                    ret = self.client_manager.add_streamer(client_socket, addr, client_id, channel)
+                    if not ret:
+                        client_socket.send(b'channel_already_used')
+                        continue
                     streamer = ThreadedStreamer(self, client_socket, addr, client_id, channel)
                     ps.append(Process(target = streamer.start_deliver))
                     ps[-1].start()
@@ -43,7 +46,9 @@ class WebSocketServer(object):
             except socket.timeout:
                 continue
             except KeyboardInterrupt:
+                [p.terminate() for p in ps]
                 self.s.close()
+                break
         [p.join() for p in ps]
 
     def start_deliver(self, streamer, streamer_addr, streamer_id, channel):
@@ -71,10 +76,13 @@ class WebSocketServer(object):
 
     def monitor_clients(self, interval=1):
         '''monitor all clients and delete if connection closed'''
-        while 1:
-            len_streamers, len_receivers = self.client_manager.monitor_clients()
-            print('[{}]: num streamers: {}, num receivers: {}'.format(datetime.datetime.now(), len_streamers, len_receivers))
-            time.sleep(interval)
+        try:
+            while 1:
+                len_streamers, len_receivers = self.client_manager.monitor_clients()
+                print('[{}]: num streamers: {}, num receivers: {}'.format(datetime.datetime.now(), len_streamers, len_receivers))
+                time.sleep(interval)
+        except KeyboardInterrupt:
+            pass
 
     def __deliver__(self, streamer, streamer_addr, streamer_id, channel) -> bool:
         try:
