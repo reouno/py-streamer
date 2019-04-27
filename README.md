@@ -1,6 +1,8 @@
 # py-streamer
 python video streaming server
 
+![streamer-server-receiver](https://github.com/reouno/py-streamer/blob/master/data/streamer-server-receiver.png)
+
 # env
 
 - test env: ubuntu18.04
