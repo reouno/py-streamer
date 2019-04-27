@@ -25,15 +25,15 @@ python server.py
 
 # start streamer client
 # if use opencv for capturing camera
-python streamer_client.py
+python streamer_client.py --name my_channel
 # if use picamera for capturing camera
-python streamer_client_raspi.py
+python streamer_client_raspi.py --name my_channel
 
 # start receiver client
 # env that can open GUI server
-python receiver_client.py
+python receiver_client.py --name my_channel
 # cui env (just for debug)
-python receiver_client.py --only-cui
+python receiver_client.py --name my_channel --only-cui
 ```
 
 # TODO
